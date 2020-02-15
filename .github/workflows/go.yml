@@ -20,5 +20,16 @@ jobs:
       run: |
         go get -v -t -d ./...
 
-    - name: Build
-      run: go build -v .
+    - name: gox
+      run: |
+        go get -u github.com/mitchellh/gox
+        gox -os="linux darwin windows" -arch="amd64" -output="dist/adrs_{{.OS}}"
+        cd dist/ && gzip -k *
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/*
+        tag_name: v0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
