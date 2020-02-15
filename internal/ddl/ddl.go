@@ -22,7 +22,7 @@ var fns = template.FuncMap{
 }
 
 func Output(athenaDB string, s3Prefix string, t *model.Table) {
-	template, err := template.New("DDL").Funcs(fns).ParseFiles("internal/ddl/ddl.sql.tmpl")
+	template, err := template.New("DDL").Funcs(fns).Parse(DdlTemplate)
 	if err != nil {
 		log.Fatalln(err)
 	}
