@@ -24,17 +24,15 @@ jobs:
       run: |
         go get github.com/mitchellh/gox
         $HOME/go/bin/gox -os="linux darwin windows" -arch="amd64" -output="dist/{{.OS}}/adrs"
-        gzip -r -S "_linux.gz" dist/linux
-        gzip -r -S "_macos.gz" dist/darwin
-        gzip -r -S "_windows.gz" dist/windows
+        chmod -R +x dist
+        tar -cf dist/linux.tar dist/linux
+        tar -cf dist/macos.tar dist/darwin
+        tar -cf dist/windows.tar dist/windows
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        files: |
-          dist/linux/adrs*
-          dist/darwin/adrs*
-          dist/windows/adrs*
+        files: dist/*.tar
         tag_name: v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
