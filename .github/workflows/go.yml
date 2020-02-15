@@ -1,5 +1,10 @@
-name: Go
-on: [push]
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
 jobs:
 
   build:
@@ -33,6 +38,5 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: dist/*.tar
-        tag_name: v0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
