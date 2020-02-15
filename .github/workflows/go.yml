@@ -25,9 +25,9 @@ jobs:
         go get github.com/mitchellh/gox
         $HOME/go/bin/gox -os="linux darwin windows" -arch="amd64" -output="dist/{{.OS}}/adrs"
         chmod -R +x dist
-        tar -cf dist/linux.tar dist/linux
-        tar -cf dist/macos.tar dist/darwin
-        tar -cf dist/windows.tar dist/windows
+        tar -cf dist/linux.tar -C dist/linux adrs
+        tar -cf dist/macos.tar -C dist/darwin adrs
+        tar -cf dist/windows.tar -C dist/windows adrs
 
     - name: Release
       uses: softprops/action-gh-release@v1
