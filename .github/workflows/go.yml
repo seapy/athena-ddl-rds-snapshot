@@ -23,8 +23,7 @@ jobs:
     - name: gox
       run: |
         go get github.com/mitchellh/gox
-        $HOME/go/bin/gox -os="linux darwin windows" -arch="amd64" -output="dist/adrs_{{.OS}}"
-        cd dist/ && gzip -k *
+        $HOME/go/bin/gox -os="linux darwin windows" -arch="amd64" -output="dist/{{.OS}}/adrs"
 
     - name: Release
       uses: softprops/action-gh-release@v1
