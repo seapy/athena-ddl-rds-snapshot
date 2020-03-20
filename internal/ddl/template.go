@@ -2,7 +2,7 @@ package ddl
 
 const DdlTemplate  = `
 {{define "DDL" -}}
-CREATE EXTERNAL TABLE IF NOT EXISTS {{.AthenaDB}}.{{.Table.AthenaName}} (
+CREATE EXTERNAL TABLE IF NOT EXISTS ` + "`{{.AthenaDB}}.{{.Table.AthenaName}}`" + `(
   {{ range $i, $e := .Table.Columns -}}
 ` + "`{{$e.Name}}`" + ` {{$e.AthenaType}}{{if last $i $.Table.Columns | not }},{{end}}
   {{ end -}}

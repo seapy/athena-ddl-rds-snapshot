@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/seapy/athena-ddl-rds-snapshot/internal/athena"
 	"github.com/seapy/athena-ddl-rds-snapshot/internal/ddl"
+	"github.com/seapy/athena-ddl-rds-snapshot/internal/model"
 	"github.com/seapy/athena-ddl-rds-snapshot/internal/parser"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 var rootCmd = &cobra.Command{
@@ -17,13 +20,11 @@ var rootCmd = &cobra.Command{
 			if len(tables) > 0 {
 				for _, filterName := range tables {
 					if t.AthenaName() == filterName {
-						ddl.Output(athenaDB, s3Prefix, &t)
-						fmt.Print("\n\n")
+						sqlProcess(t)
 					}
 				}
 			} else {
-				ddl.Output(athenaDB, s3Prefix, &t)
-				fmt.Print("\n\n")
+				sqlProcess(t)
 			}
 		}
 	},
@@ -33,6 +34,8 @@ var athenaDB string
 var s3Prefix string
 var infoPath string
 var tables []string
+var execute bool
+var workgroup string
 
 func Execute() error {
 	return rootCmd.Execute()
@@ -46,4 +49,23 @@ func init() {
 	rootCmd.Flags().StringVarP(&infoPath, "infoPath", "i", "", "Table exported information json file location. you can download from s3 exported result.")
 	rootCmd.MarkFlagRequired("infoPath")
 	rootCmd.Flags().StringSliceVarP(&tables, "tables", "t", nil, "Table name if you want DDL only some tables. Seprated by comma(,)")
+	rootCmd.Flags().BoolVarP(&execute, "execute", "e", false, "Execute sql to Athena")
+	rootCmd.Flags().StringVarP(&workgroup, "workgroup", "w", "", "Athena workgroup. Required if execute is true")
+}
+
+func sqlProcess(t model.Table) {
+	sql, err := ddl.Sql(athenaDB, s3Prefix, &t)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fmt.Printf("🚀 %s \n", t.Name)
+	if execute {
+		_, err := athena.Update(sql, workgroup)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	} else {
+		fmt.Println(sql)
+	}
 }

@@ -11,10 +11,23 @@ Download binary from github release.
 
 ## Usage
 
+Print DDL 
+
 ```shell script
 $ adrs -i export_tables_info.json \
-    -a hoian -s s3://my-export-bucket/prefix/your-database-name/ \
+    -a hoian \
+    -s s3://my-export-bucket/prefix/your-database-name/ \
     -t users,articles
+```
+
+Execute DDL to Athena
+```shell script
+$ adrs -i export_tables_info.json \
+    -a hoian \
+    -s s3://my-export-bucket/prefix/your-database-name/ \
+    -t users,articles \
+    -w primary \
+    -e
 ```
 
 - `-a`, `--athenaDB`
@@ -25,5 +38,8 @@ $ adrs -i export_tables_info.json \
   - Required. Table exported information json file location. you can download from s3 exported result.
 - `-t`, `--tables`
   - Optional. Table name if you want DDL only some tables. Seprated by comma(,)
-
-DDL result is present standard output 
+- `-e`, `--execute`
+  - Optional. Execute sql to Athena (Default false)
+  - Required AWS Secret Environment(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION)
+- `-w`, `--workgroup`
+  - Optional.(Required if execute is true) Athena workgroup. 

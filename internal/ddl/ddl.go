@@ -1,9 +1,8 @@
 package ddl
 
 import (
+	"bytes"
 	"github.com/seapy/athena-ddl-rds-snapshot/internal/model"
-	"log"
-	"os"
 	"reflect"
 	"text/template"
 )
@@ -21,15 +20,20 @@ var fns = template.FuncMap{
 	},
 }
 
-func Output(athenaDB string, s3Prefix string, t *model.Table) {
+func Sql(athenaDB string, s3Prefix string, t *model.Table) (string, error) {
 	template, err := template.New("DDL").Funcs(fns).Parse(DdlTemplate)
 	if err != nil {
-		log.Fatalln(err)
+		return "", err
 	}
 	model := Ddl{
 		AthenaDB: athenaDB,
 		S3Prefix: s3Prefix,
 		Table:    t,
 	}
-	template.ExecuteTemplate(os.Stdout, "DDL", model)
+	var buff bytes.Buffer
+	err = template.ExecuteTemplate(&buff, "DDL", model)
+	if err != nil {
+		return "", err
+	}
+	return buff.String(), nil
 }
