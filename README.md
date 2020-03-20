@@ -9,6 +9,12 @@ Create Athena table DDL from Amazon RDS Snapshot Export to S3 information json.
 
 Download binary from github release.
 
+```shell script
+# macOS
+$ curl -LO https://github.com/seapy/athena-ddl-rds-snapshot/releases/download/v1.0/macos.tar
+$ tar -xvf macos.tar
+```
+
 ## Usage
 
 Print DDL 
